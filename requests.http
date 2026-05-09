@@ -1,0 +1,63 @@
+### Health
+GET http://localhost:8080/actuator/health
+
+### Create user
+POST http://localhost:8080/api/users
+Content-Type: application/json
+
+{
+  "fullName": "Ahmed Ali",
+  "phoneNumber": "+201000000000"
+}
+
+### Register device token
+POST http://localhost:8080/api/users/1/device-tokens
+Content-Type: application/json
+
+{
+  "token": "fake-device-token-123",
+  "platform": "ANDROID"
+}
+
+### Create upcoming payment
+POST http://localhost:8080/api/payments
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "amount": 450.00,
+  "currency": "EGP",
+  "dueDate": "2026-05-10"
+}
+
+### Create missed payment
+POST http://localhost:8080/api/payments
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "amount": 300.00,
+  "currency": "EGP",
+  "dueDate": "2026-05-01"
+}
+
+### List payments
+GET http://localhost:8080/api/payments
+
+### Trigger upcoming reminders manually
+POST http://localhost:8080/api/admin/jobs/upcoming-payment-reminders/run
+
+### Trigger missed payment job manually
+POST http://localhost:8080/api/admin/jobs/missed-payments/run
+
+### Retry notifications manually
+POST http://localhost:8080/api/admin/jobs/notifications/retry
+
+### View notifications
+GET http://localhost:8080/api/admin/notifications
+
+### View job executions
+GET http://localhost:8080/api/admin/jobs/executions
+
+### Scheduled tasks
+GET http://localhost:8080/actuator/scheduledtasks

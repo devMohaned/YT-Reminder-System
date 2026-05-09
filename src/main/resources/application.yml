@@ -1,0 +1,53 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: fintech-installment-reminder-system
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/installment_reminder_db}
+    username: ${SPRING_DATASOURCE_USERNAME:installment_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:installment_password}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,scheduledtasks
+
+payment-reminder:
+  jobs:
+    zone: Africa/Cairo
+
+    upcoming-payment-reminder:
+      cron: "0 0 9 * * *"
+      days-before-due-date: 3
+      batch-size: 500
+
+    missed-payment:
+      cron: "0 0 * * * *"
+      batch-size: 500
+
+    notification-retry:
+      cron: "0 */5 * * * *"
+      batch-size: 500
+      max-retry-count: 3
+
+  push:
+    provider: ${PAYMENT_REMINDER_PUSH_PROVIDER:mock}
+
+  firebase:
+    service-account-path: ${PAYMENT_REMINDER_FIREBASE_SERVICE_ACCOUNT_PATH:}

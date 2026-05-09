@@ -169,7 +169,7 @@ Postgres connection:
 pgAdmin:
 
 - URL: `http://localhost:5050`
-- Email: `admin@local.test`
+- Email: `admin@installmentreminder.com`
 - Password: `admin`
 
 ### Option B: Run Everything with Docker

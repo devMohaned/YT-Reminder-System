@@ -95,7 +95,7 @@ Configuration file: `src/main/resources/application.yml`
 | `spring.datasource.url` | `jdbc:postgresql://localhost:5432/installment_reminder_db` |
 | `spring.datasource.username` | `installment_user` |
 | `spring.datasource.password` | `installment_password` |
-| `spring.jpa.hibernate.ddl-auto` | `validate` |
+| `spring.jpa.hibernate.ddl-auto` | `update` |
 | `spring.flyway.enabled` | `true` |
 
 ### Scheduler & Jobs
@@ -128,6 +128,22 @@ You can override these via env vars:
 - `SPRING_DATASOURCE_PASSWORD`
 - `PAYMENT_REMINDER_PUSH_PROVIDER`
 - `PAYMENT_REMINDER_FIREBASE_SERVICE_ACCOUNT_PATH`
+
+### Default Local Credentials (`docker-compose.yml`)
+
+PostgreSQL:
+
+- Host: `localhost`
+- Port: `5432`
+- Database: `installment_reminder_db`
+- Username: `installment_user`
+- Password: `installment_password`
+
+pgAdmin:
+
+- URL: `http://localhost:5050`
+- Email: `admin@installmentreminder.com`
+- Password: `admin`
 
 ## Running the Project
 
@@ -172,18 +188,31 @@ pgAdmin:
 - Email: `admin@installmentreminder.com`
 - Password: `admin`
 
-### Option B: Run Everything with Docker
+### Option B: Run App in Docker (DB/pgAdmin still via Compose)
 
-1. Build jar:
+`docker-compose.yml` currently defines `postgres` and `pgadmin` services only.
+
+1. Start PostgreSQL and pgAdmin:
+
+```bash
+docker compose up -d postgres pgadmin
+```
+
+2. Build jar + Docker image:
 
 ```bash
 mvn clean package
+docker build -t installment-reminder-app .
 ```
 
-2. Run app + db:
+3. Run app container:
 
 ```bash
-docker compose up
+docker run --rm --name installment-reminder-app -p 8080:8080 \
+  -e SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/installment_reminder_db \
+  -e SPRING_DATASOURCE_USERNAME=installment_user \
+  -e SPRING_DATASOURCE_PASSWORD=installment_password \
+  installment-reminder-app
 ```
 
 App URL: `http://localhost:8080`
@@ -364,6 +393,7 @@ Flyway migrations:
 
 - `V1__init_schema.sql`
 - `V2__seed_demo_data.sql`
+- `V3__create_shedlock_table.sql`
 
 Main tables:
 
